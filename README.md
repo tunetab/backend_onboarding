@@ -1,4 +1,4 @@
-### #{PROJECT_NAME_H}
+### Back_Onboarding
 
 ## Requirements
 
@@ -12,7 +12,7 @@ Copy  `.env.example` to `.env` and change variables if needed
 For OsX users run command
 
 ```shell
-ifconfig lo0 alias #{PROJECT_IP}
+ifconfig lo0 alias 127.0.0.1
 ```
 
 Run developer env (postgres + nginx)

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: '#{PROJECT_NAME_H} Admin Users API'
+  title: 'Back_Onboarding Admin Users API'
   version: 1.0.0
 servers: [ ]
 

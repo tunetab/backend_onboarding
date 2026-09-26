@@ -11,13 +11,13 @@ databaseChangeLog:
                   valueComputed: gen_random_uuid()
               - column:
                   name: email
-                  value: '#{ADMIN_EMAIL}'
+                  value: 'sergeypanov2108@gmail.com'
               - column:
                   name: phone
-                  value: '#{ADMIN_PHONE}'
+                  value: '89139272774'
               - column:
                   name: password
-                  value: '#{ADMIN_PASSWORD_HASH}'
+                  value: '$2y$10$Qw3bL6OAArlHjRhL8cW50uGQYHN4albMtMPN9bEftdNw4EAq5giSa'
               - column:
                   name: role
                   value: SUPERADMIN
@@ -35,4 +35,4 @@ databaseChangeLog:
                   valueComputed: CURRENT_TIMESTAMP
       rollback:
         - sql:
-            sql: DELETE FROM users WHERE email = '#{ADMIN_EMAIL}' AND phone = '#{ADMIN_PHONE}' AND role = 'SUPERADMIN';
+            sql: DELETE FROM users WHERE email = 'sergeypanov2108@gmail.com' AND phone = '89139272774' AND role = 'SUPERADMIN';

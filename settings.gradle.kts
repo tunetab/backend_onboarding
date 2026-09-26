@@ -1,4 +1,4 @@
-rootProject.name = "GRADLE_PROJECT_NAME"
+rootProject.name = "back_onboarding"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 

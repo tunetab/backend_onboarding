@@ -26,7 +26,7 @@
         <maxChunkSize>8192</maxChunkSize>
         <encoder class="de.siegmar.logbackgelf.GelfEncoder">
             <staticField>env:${env}</staticField>
-            <staticField>#{PROJECT_NAME}</staticField>
+            <staticField>back_onboarding</staticField>
             <staticField>os_arch:${os.arch}</staticField>
             <staticField>os_name:${os.name}</staticField>
             <staticField>os_version:${os.version}</staticField>
@@ -43,7 +43,7 @@
         <graylogPort>12201</graylogPort>
         <maxChunkSize>8192</maxChunkSize>
         <encoder class="de.siegmar.logbackgelf.GelfEncoder">
-            <staticField>#{PROJECT_NAME}-request</staticField>
+            <staticField>back_onboarding-request</staticField>
             <staticField>os_arch:${os.arch}</staticField>
             <staticField>os_name:${os.name}</staticField>
             <staticField>os_version:${os.version}</staticField>

@@ -1,13 +1,13 @@
 openapi: 3.0.3
 info:
-  title: '#{PROJECT_NAME_H} API'
+  title: 'Back_Onboarding API'
   version: 1.0.0
 servers:
-  - url: 'http://#{PROJECT_IP}:8080'
+  - url: 'http://127.0.0.1:8080'
     description: 'Local API server'
-  - url: 'https://api.#{DEV_SUBDOMAIN}.icerockdev.com'
+  - url: 'https://api.cspanov_onboarding.icerockdev.com'
     description: 'Development API server'
-  - url: 'https://api.#{PROD_DOMAIN}'
+  - url: 'https://api.spanov_onboarding'
     description: 'Production API server'
 
 paths:

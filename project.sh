@@ -125,7 +125,7 @@ function cmdLocalize() {
     fi
 
     npm install
-    npm start spring strings "#{SHEET_ID}" 'backend!A1:C' ../
+    npm start spring strings "14gGhwPZQ79PMfLBu_VYbE8UujjTi5o5KlnXg9zruQZo" 'backend!A1:C' ../
 }
 
 function echoYell() {
