@@ -27,7 +27,7 @@ openApiGeneratorVersion = "6.2.1"
 socketIOVersion = "2.0.1"
 mergeOpenApiVersion = "1.0.5"
 scrImageVersion = "4.0.33"
-springdocWebMvcUiVersion = "2.5.0"
+springdocWebMvcUiVersion = "2.8.9"
 testContainerPostgresVersion = "1.20.0"
 
 [libraries]
