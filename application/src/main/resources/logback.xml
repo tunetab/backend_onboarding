@@ -1,0 +1,82 @@
+<configuration>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %X{call-id} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+            <level>DEBUG</level>
+            <level>TRACE</level>
+        </filter>
+    </appender>
+    <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %X{call-id} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+            <level>ERROR</level>
+        </filter>
+    </appender>
+    <appender name="GELF" class="de.siegmar.logbackgelf.GelfUdpAppender">
+        <graylogHost>173.212.230.84</graylogHost>
+        <graylogPort>12201</graylogPort>
+        <maxChunkSize>8192</maxChunkSize>
+        <encoder class="de.siegmar.logbackgelf.GelfEncoder">
+            <staticField>env:${env}</staticField>
+            <staticField>#{PROJECT_NAME}</staticField>
+            <staticField>os_arch:${os.arch}</staticField>
+            <staticField>os_name:${os.name}</staticField>
+            <staticField>os_version:${os.version}</staticField>
+            <includeMdcData>true</includeMdcData>
+            <includeRootCauseData>true</includeRootCauseData>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+            <level>ERROR</level>
+        </filter>
+    </appender>
+    <appender name="GELF_REQUEST" class="de.siegmar.logbackgelf.GelfUdpAppender">
+        <graylogHost>173.212.230.84</graylogHost>
+        <graylogPort>12201</graylogPort>
+        <maxChunkSize>8192</maxChunkSize>
+        <encoder class="de.siegmar.logbackgelf.GelfEncoder">
+            <staticField>#{PROJECT_NAME}-request</staticField>
+            <staticField>os_arch:${os.arch}</staticField>
+            <staticField>os_name:${os.name}</staticField>
+            <staticField>os_version:${os.version}</staticField>
+            <includeMdcData>true</includeMdcData>
+            <includeRootCauseData>true</includeRootCauseData>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+    </appender>
+    <appender name="ASYNC_GELF" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="GELF"/>
+        <neverBlock>true</neverBlock>
+    </appender>
+
+    <appender name="ASYNC_GELF_REQUEST" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="GELF_REQUEST"/>
+        <neverBlock>true</neverBlock>
+    </appender>
+    <root level="WARN">
+        <appender-ref ref="STDERR"/>
+        <appender-ref ref="ASYNC_GELF"/>
+    </root>
+    <logger name="org.springframework.boot.web.embedded.tomcat.TomcatWebServer" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_GELF"/>
+    </logger>
+    <logger name="com.icerockdev.application" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_GELF"/>
+    </logger>
+    <logger name="com.icerockdev.log" level="TRACE">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_GELF_REQUEST"/>
+    </logger>
+</configuration>

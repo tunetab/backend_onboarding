@@ -1,0 +1,208 @@
+openapi: 3.0.3
+info:
+  title: '#{PROJECT_NAME_H} Admin Users API'
+  version: 1.0.0
+servers: [ ]
+
+paths:
+  /v1/admin/user:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - "[Admin] User"
+      parameters:
+        - $ref: 'openapi-common.yaml#/components/parameters/PaginationPageNumber'
+        - $ref: 'openapi-common.yaml#/components/parameters/PaginationPageSize'
+        - $ref: 'openapi-common.yaml#/components/parameters/PaginationPageSort'
+        - $ref: 'openapi-common.yaml#/components/parameters/FilterId'
+        - $ref: 'openapi-common.yaml#/components/parameters/FilterEmail'
+        - $ref: 'openapi-common.yaml#/components/parameters/FilterPhone'
+        - $ref: 'openapi-common.yaml#/components/parameters/FilterStatus'
+        - $ref: 'openapi-common.yaml#/components/parameters/FilterRole'
+        - $ref: 'openapi-common.yaml#/components/parameters/FilterIsTest'
+      summary: "[Admin] Get user list"
+      description: "[Admin] Get user list"
+      operationId: 'getUserList'
+      responses:
+        '200':
+          $ref: '#/components/responses/UserListResponse'
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - "[Admin] User"
+      description: "[Admin] Create user"
+      summary: "[Admin] Create user"
+      operationId: 'createUser'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateUserRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/UserResponse'
+
+  /v1/admin/user/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        description: 'User ID'
+        schema:
+          type: string
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - "[Admin] User"
+      description: "[Admin] Get user"
+      summary: "[Admin] Get user"
+      operationId: 'getUser'
+      responses:
+        '200':
+          $ref: '#/components/responses/UserResponse'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - "[Admin] User"
+      description: "[Admin] Update user"
+      summary: "[Admin] Update user"
+      operationId: 'updateUser'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateUserRequest'
+      responses:
+        '200':
+          $ref: 'openapi-common.yaml#/components/responses/EmptyResponse'
+    delete:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - "[Admin] User"
+      description: "[Admin] Delete user"
+      summary: "[Admin] Delete user"
+      operationId: 'deleteUser'
+      responses:
+        '200':
+          $ref: 'openapi-common.yaml#/components/responses/EmptyResponse'
+
+  /v1/admin/user/{userId}/block:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        description: 'User ID'
+        schema:
+          type: string
+    put:
+      tags:
+        - "[Admin] User"
+      description: "[Admin] Block user"
+      summary: "[Admin] Block user"
+      security:
+        - bearerAuth: [ ]
+      operationId: "blockUser"
+      responses:
+        '200':
+          $ref: 'openapi-common.yaml#/components/responses/EmptyResponse'
+
+  /v1/admin/user/{userId}/unblock:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        description: 'User ID'
+        schema:
+          type: string
+    put:
+      tags:
+        - "[Admin] User"
+      description: "[Admin] Unblock user"
+      summary: "[Admin] Unblock user"
+      security:
+        - bearerAuth: [ ]
+      operationId: "unblockUser"
+      responses:
+        '200':
+          $ref: 'openapi-common.yaml#/components/responses/EmptyResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  requestBodies:
+    CreateUserRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateUserRequestBody'
+    UpdateUserRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateUserRequestBody'
+
+  responses:
+    UserListResponse:
+      description: 'User list response'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'openapi-common.yaml#/components/schemas/UserListData'
+              - $ref: 'openapi-common.yaml#/components/schemas/ResponseList'
+    UserResponse:
+      description: 'User response'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'openapi-common.yaml#/components/schemas/UserData'
+              - $ref: 'openapi-common.yaml#/components/schemas/Response'
+
+  schemas:
+    CreateUserRequestBody:
+      description: 'Create user request body'
+      properties:
+        email:
+          description: 'Email'
+          type: string
+        phone:
+          description: 'Phone'
+          type: string
+        password:
+          description: 'Password'
+          type: string
+        isTest:
+          description: 'Is test flag'
+          type: boolean
+          default: false
+        role:
+          $ref: 'openapi-common.yaml#/components/schemas/RoleProperty'
+      required:
+        - email
+        - phone
+        - password
+        - isTest
+        - role
+    UpdateUserRequestBody:
+      description: 'Update user request body'
+      properties:
+        email:
+          description: 'Email'
+          type: string
+        phone:
+          description: 'Phone'
+          type: string
+        password:
+          description: 'Password'
+          type: string
+        isTest:
+          description: 'Is test flag'
+          type: boolean
+        status:
+          $ref: 'openapi-common.yaml#/components/schemas/StatusProperty'
+        role:
+          $ref: 'openapi-common.yaml#/components/schemas/RoleProperty'

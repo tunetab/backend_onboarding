@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_refresh_token_table
+      author: atamarov@icerockdev.com
+      changes:
+        - createTable:
+            tableName: refresh_token
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: token
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entity_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entity_type
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expired_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+      rollback:
+        - sql:
+            sql: DROP TABLE refresh_token;

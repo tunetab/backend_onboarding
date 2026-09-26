@@ -1,0 +1,115 @@
+openapi: 3.0.3
+info:
+  title: '#{PROJECT_NAME_H} Users API'
+  version: 1.0.0
+servers: [ ]
+
+paths:
+  /v1/user/profile:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - User
+      description: "[User] Get user profile"
+      summary: "[User] Get user profile"
+      operationId: 'getUserProfile'
+      responses:
+        '200':
+          $ref: '#/components/responses/UserProfileResponse'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - User
+      description: "Update self profile"
+      summary: "Update self profile"
+      operationId: 'updateUserProfile'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateUserProfileRequest'
+      responses:
+        '200':
+          $ref: 'openapi-common.yaml#/components/responses/EmptyResponse'
+  /v1/user:
+    delete:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - User
+      description: "Delete self account"
+      summary: "Delete self account"
+      operationId: 'deleteUserSelfAccount'
+      responses:
+        '200':
+          $ref: 'openapi-common.yaml#/components/responses/EmptyResponse'
+  
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  requestBodies:
+    UpdateUserProfileRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateUserProfileRequestBody'
+
+  responses:
+    UserProfileResponse:
+      description: 'User profile response'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/UserProfileData'
+              - $ref: 'openapi-common.yaml#/components/schemas/Response'
+
+  schemas:
+    UserProfileInfo:
+      description: User profile info
+      properties:
+        userId:
+          description: 'User ID'
+          type: string
+        firstName:
+          description: First name
+          type: string
+        lastName:
+          description: Last name
+          type: string
+        middleName:
+          description: Middle name
+          type: string
+        createdAt:
+          description: Created At
+          type: string
+        updatedAt:
+          description: Updated At
+          type: string
+      required:
+        - userId
+        - firstName
+        - createdAt
+        - updatedAt
+    UserProfileData:
+      description: User Profile Data
+      properties:
+        data:
+          $ref: '#/components/schemas/UserProfileInfo'
+    UpdateUserProfileRequestBody:
+      description: 'Update user profile request body'
+      properties:
+        firstName:
+          description: First name
+          type: string
+        lastName:
+          description: Last name
+          type: string
+        middleName:
+          description: Middle name
+          type: string
+      required:
+        - firstName

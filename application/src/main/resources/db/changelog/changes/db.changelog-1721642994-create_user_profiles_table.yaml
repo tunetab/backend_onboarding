@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_user_profiles_table-1
+      author: oyakovlev@icerockdev.com
+      changes:
+        - createTable:
+            tableName: user_profiles
+            columns:
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: firstname
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: lastname
+                  type: varchar(50)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: middlename
+                  type: varchar(50)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+                  constraints:
+                    nullable: true
+        - createIndex:
+            indexName: idx_user_profiles_deleted_at
+            columns:
+              - column:
+                  name: deleted_at
+            tableName: user_profiles
+            unique: false
+      rollback:
+        - sql:
+            sql: DROP TABLE user_profiles;

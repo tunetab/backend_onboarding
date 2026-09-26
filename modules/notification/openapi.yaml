@@ -1,0 +1,359 @@
+openapi: 3.0.3
+info:
+  title: '#{PROJECT_NAME_H} API'
+  version: 1.0.0
+servers:
+  - url: 'http://#{PROJECT_IP}:8080'
+    description: 'Local API server'
+  - url: 'https://api.#{DEV_SUBDOMAIN}.icerockdev.com'
+    description: 'Development API server'
+  - url: 'https://api.#{PROD_DOMAIN}'
+    description: 'Production API server'
+
+paths:
+
+  # Notification
+  /v1/notification:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Notification
+      summary: 'Get notifications list with pagination'
+      operationId: 'getNotificationList'
+      responses:
+        '200':
+          $ref: '#/components/responses/NotificationsResponse'
+
+  /v1/notification/token:
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Notification
+      summary: 'Add push token'
+      operationId: 'addPushToken'
+      requestBody:
+        $ref: '#/components/requestBodies/AddPushTokenRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/EmptyResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /v1/notification/token/{token}:
+    delete:
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Notification
+      summary: 'Delete push token'
+      operationId: 'deletePushToken'
+      responses:
+        '200':
+          $ref: '#/components/responses/EmptyResponse'
+
+  /v1/notification/{notificationId}/read:
+    put:
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Notification
+      summary: 'Set notification read'
+      operationId: 'setNotificationRead'
+      responses:
+        '200':
+          $ref: '#/components/responses/EmptyResponse'
+
+  /v1/notification/read:
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Notification
+      summary: 'Set all notifications read'
+      operationId: 'setAllNotificationsRead'
+      responses:
+        '200':
+          $ref: '#/components/responses/EmptyResponse'
+
+  /v1/notification/{notificationId}:
+    delete:
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Notification
+      summary: 'Delete notification'
+      operationId: 'deleteNotification'
+      responses:
+        '200':
+          $ref: '#/components/responses/EmptyResponse'
+
+  /v1/notification/settings:
+    get:
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: sort
+          description: "Список параметров для сортировки"
+          example: "?sort=id,ASC&sort=name,DESC&sort=..."
+          in: query
+          schema:
+            type: string
+          required: false
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Notification
+      summary: 'Get notification settings list'
+      operationId: 'getNotificationSettingsList'
+      responses:
+        '200':
+          $ref: '#/components/responses/NotificationSettingsListResponse'
+    put:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Notification
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateNotificationSettingsRequest'
+      summary: 'Update notification settings'
+      operationId: 'updateNotificationSettings'
+      responses:
+        '200':
+          $ref: '#/components/responses/NotificationSettingsResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Response:
+      description: 'Basic response'
+      type: object
+      required:
+        - timestamp
+        - success
+      properties:
+        timestamp:
+          description: Response timestamp
+          type: number
+        success:
+          description: Response status
+          type: boolean
+    ResponseList:
+      description: Basic response list
+      properties:
+        totalElements:
+          description: Response total list count
+          type: integer
+        totalPages:
+          description: Response total pages count
+          type: integer
+      required:
+        - totalElements
+        - totalPages
+    ErrorResponse:
+      description: 'Error response'
+      allOf:
+        - $ref: '#/components/schemas/Response'
+        - type: object
+          properties:
+            success:
+              description: response success or not
+              type: boolean
+              default: false
+    ValidationErrorResponse:
+      description: 'Validation Error Response'
+      allOf:
+        - $ref: '#/components/schemas/Response'
+        - type: object
+          properties:
+            data:
+              description: data
+              type: array
+              items:
+                $ref: '#/components/schemas/ErrorDetail'
+    ErrorDetail:
+      description: 'Error detail'
+      required:
+        - message
+        - code
+      properties:
+        message:
+          type: string
+          description: Error message
+        code:
+          type: integer
+          description: Error code
+        field:
+          type: string
+          description: Field with error
+      type: object
+    Notification:
+      properties:
+        id:
+          type: string
+          description: UUID
+        message:
+          type: string
+        type:
+          type: number
+        isRead:
+          type: boolean
+      required:
+        - id
+        - message
+        - isRead
+    NotificationList:
+      properties:
+        data:
+          allOf:
+            - $ref: '#/components/schemas/ResponseList'
+            - $ref: '#/components/schemas/NotificationListData'
+      required:
+        - data
+    NotificationListData:
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+      required:
+        - items
+    AddPushTokenRequestBody:
+      properties:
+        token:
+          type: string
+      required:
+        - token
+    NotificationSettings:
+      properties:
+        type:
+          type: number
+        enabled:
+          type: boolean
+        label:
+          type: string
+      required:
+        - type
+        - enabled
+        - label
+    NotificationSettingsData:
+      properties:
+        data:
+          $ref: '#/components/schemas/NotificationSettings'
+      required:
+        - data\
+    NotificationSettingsList:
+      properties:
+        data:
+          allOf:
+            - $ref: '#/components/schemas/ResponseList'
+            - $ref: '#/components/schemas/NotificationSettingsListData'
+      required:
+        - data
+    NotificationSettingsListData:
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationSettings'
+      required:
+        - items
+    UpdateNotificationSettingsRequestBody:
+      properties:
+        type:
+          type: number
+        enabled:
+          type: boolean
+      required:
+        - type
+        - enabled
+
+  requestBodies:
+    AddPushTokenRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AddPushTokenRequestBody'
+    UpdateNotificationSettingsRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateNotificationSettingsRequestBody'
+
+  responses:
+    ResourceNotFound:
+      description: 'Resource not found'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: 'Validation Error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationErrorResponse'
+    EmptyResponse:
+      description: 'Response without data'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response'
+    NotificationsResponse:
+      description: 'Get notifications list success response'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Response'
+              - $ref: '#/components/schemas/NotificationListData'
+    NotificationSettingsListResponse:
+      description: 'Get notification settings list success response'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Response'
+              - $ref: '#/components/schemas/NotificationSettingsList'
+    NotificationSettingsResponse:
+      description: 'Update notification settings success response'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Response'
+              - $ref: '#/components/schemas/NotificationSettingsData'

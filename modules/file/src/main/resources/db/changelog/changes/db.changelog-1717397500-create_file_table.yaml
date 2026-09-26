@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_file_table
+      author: author email
+      changes:
+        - createTable:
+            tableName: file
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: key
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: entity_id
+                  type: UUID
+                  constraints:
+                    nullable: true
+              - column:
+                  name: entity_type
+                  type: integer
+                  constraints:
+                    nullable: true
+              - column:
+                  name: meta
+                  type: JSONB
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+      rollback:
+        - sql:
+            sql: DROP TABLE file;

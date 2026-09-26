@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_confirmation_token_table
+      author: atamarov@icerockdev.com
+      changes:
+        - createTable:
+            tableName: confirmation_token
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: token
+                  type: varchar(300)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entity_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entity_type
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: varchar(13)
+              - column:
+                  name: expired_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: idx_confirmation_token_token_and_type
+            columns:
+              - column:
+                  name: token
+              - column:
+                  name: type
+            tableName: confirmation_token
+            unique: true
+
+      rollback:
+        - sql:
+            sql: DROP TABLE confirmation_token;

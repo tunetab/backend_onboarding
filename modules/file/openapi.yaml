@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  title: '#{PROJECT_NAME_H} API'
+  version: 1.0.0
+servers:
+  - url: 'http://#{PROJECT_IP}:8080'
+    description: 'Local API server'
+  - url: 'https://api.#{DEV_SUBDOMAIN}.icerockdev.com'
+    description: 'Development API server'
+  - url: 'https://api.#{PROD_DOMAIN}'
+    description: 'Production API server'
+
+paths:
+  # File
+  /v1/file/upload:
+    post:
+      tags:
+        - File
+      summary: 'Upload File'
+      operationId: 'uploadFile'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: 'Ok'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUploadResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Response:
+      description: 'Basic response'
+      type: object
+      required:
+        - status
+        - message
+        - timestamp
+        - success
+      properties:
+        status:
+          description: Http status code
+          type: integer
+        message:
+          description: Response message
+          type: string
+        timestamp:
+          description: Response timestamp
+          type: number
+        success:
+          description: Response status
+          type: boolean
+    ResponseList:
+      description: 'Basic response list'
+      allOf:
+        - $ref: '#/components/schemas/Response'
+        - type: object
+          properties:
+            totalCount:
+              description: Response total list count
+              type: integer
+    ErrorResponse:
+      description: 'Error response'
+      allOf:
+        - $ref: '#/components/schemas/Response'
+        - type: object
+          properties:
+            success:
+              description: response success or not
+              type: boolean
+              default: false
+    ValidationErrorResponse:
+      description: 'Validation Error Response'
+      allOf:
+        - $ref: '#/components/schemas/Response'
+        - type: object
+          properties:
+            data:
+              description: data
+              type: array
+              items:
+                $ref: '#/components/schemas/ErrorDetail'
+    ErrorDetail:
+      description: 'Error detail'
+      required:
+        - message
+        - code
+      properties:
+        message:
+          type: string
+          description: Error message
+        code:
+          type: integer
+          description: Error code
+        field:
+          type: string
+          description: Field with error
+      type: object
+    FileUploadResponse:
+      description: 'File upload'
+      allOf:
+        - $ref: '#/components/schemas/Response'
+        - type: object
+          properties:
+            data:
+              type: string
+
+  responses:
+    ResourceNotFound:
+      description: 'Resource not found'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: 'Validation Error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationErrorResponse'
+    EmptyResponse:
+      description: 'Response without data'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response'

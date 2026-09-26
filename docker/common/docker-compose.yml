@@ -1,0 +1,70 @@
+version: '3.4'
+
+x-db-conf: &db-conf
+  POSTGRES_USER: ${DATABASE_USER}
+  POSTGRES_PASSWORD: ${DATABASE_PASS}
+  POSTGRES_DB: ${DATABASE_NAME}
+  POSTGRES_HOST: ${DATABASE_HOST}
+  POSTGRES_PORT: ${DATABASE_PORT}
+  POSTGRES_ROOT_PASSWORD: ${DATABASE_ROOT}
+
+services:
+  nginx:
+    image: ${IMAGE_NGINX}
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      SSL: "on"
+      SSL_DOMAIN: "${ADMIN_SERVER_NAME} ${API_SERVER_NAME} ${STORAGE_SERVER_NAME} ${STORAGE_WEB_PANEL_NAME}"
+      SSL_EMAIL: 'ssl@icerockdev.com'
+      ADMIN_SERVER_NAME: ${ADMIN_SERVER_NAME}
+      API_SERVER_NAME: ${API_SERVER_NAME}
+      STORAGE_SERVER_NAME: ${STORAGE_SERVER_NAME}
+      STORAGE_WEB_PANEL_NAME: ${STORAGE_WEB_PANEL_NAME}
+      HTPASSWD_USER: ${HTTP_AUTH_USER}
+      HTPASSWD_PASS: ${HTTP_AUTH_PASSWORD}
+    volumes:
+      - ./nginx-data:/etc/letsencrypt
+    logging: &logging
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+    stop_grace_period: 30s
+    restart: always
+    depends_on:
+      - web
+  postgres:
+    ports: # only for dev! do not expose this ports in prod mode
+      - 127.0.0.1:5432:5432
+    image: ${IMAGE_POSTGRES}
+    stop_grace_period: 30s
+    logging: *logging
+    environment:
+      <<: *db-conf
+    volumes:
+      - ./postgresql-data:/var/lib/postgresql/data
+    restart: always
+  web:
+    image: ${IMAGE_JAVA}
+    restart: always
+    stop_grace_period: 30s
+    logging: *logging
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+  rustfs:
+    image: ${IMAGE_RUSTFS}
+    restart: always
+    logging: *logging
+    ports:
+      - "${S3_HOST}:9000:9000"
+      - "${S3_HOST}:9001:9001"
+    environment:
+      RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY_ID}
+      RUSTFS_SECRET_KEY: ${S3_SECRET_ACCESS_KEY}
+    volumes:
+      - ./rustfs-data:/data
+    user: "${UID}:${GID}"

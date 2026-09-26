@@ -1,0 +1,53 @@
+spring:
+  aop:
+    auto: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate.ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  web:
+    cors:
+      allowed-origins: http://127.0.0:1
+      allowed-methods: GET,POST,PATCH,PUT,DELETE,OPTIONS,HEAD
+      max-age: 3600
+      allowed-headers: Authorization
+      exposed-headers: '*'
+jwt:
+  secret: 12345678
+  audience: test
+  issuer: http://0.0.0.0:80
+  access-token-ttl: 18000
+  refresh-token-ttl: 604800
+server:
+  address: 127.0.0.1
+api:
+  base-url: http://127.0.0:1
+  admin-url: http://127.0.0:1
+twilio:
+  phone: 123
+  account-sid: 31313131
+  auth-token: 3131313
+fcm:
+  google-service-account-json: '{}'
+smtp:
+  host: 31313
+  port: 3131
+  secure: TLS
+  auth: false
+  user:
+  password:
+  from:
+    email: ddsada
+    name: dada
+s3storage:
+  bucketName: test
+  accessKeyId: my_access_key
+  secretAccessKey: my_secret_key
+  endpoint: http://127.0.0.1:9000
+  region: us-east-1
+  allowedMimeTypes: image/png,image/jpg,image/jpeg

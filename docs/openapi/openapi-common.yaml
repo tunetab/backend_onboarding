@@ -1,0 +1,281 @@
+openapi: 3.1.0
+info:
+  title: '#{PROJECT_NAME_H} Common'
+  version: 1.0.0
+servers:
+  - url: 'http://#{PROJECT_IP}:8080'
+    description: 'Local API server'
+  - url: 'https://api.#{DEV_SUBDOMAIN}.icerockdev.com'
+    description: 'Development API server'
+  - url: 'https://api.#{PROD_DOMAIN}'
+    description: 'Production API server'
+
+paths: {}
+
+components:
+  parameters:
+    PaginationPageNumber:
+      name: page
+      description: 'Page number'
+      in: query
+      required: false
+      schema:
+        type: integer
+    PaginationPageSize:
+      name: size
+      description: 'Count elements per page'
+      in: query
+      required: false
+      schema:
+        type: integer
+    PaginationPageSort:
+      name: sort
+      description: "Список параметров для сортировки"
+      example: "?sort=id,ASC&sort=name,DESC&sort=..."
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          example: "id,DESC"
+          type: string
+    FilterId:
+      name: id
+      description: 'ID in UUID format'
+      in: query
+      required: false
+      schema:
+        type: string
+    FilterEmail:
+      name: email
+      description: 'Email'
+      in: query
+      required: false
+      schema:
+        type: string
+    FilterPhone:
+      name: phone
+      description: 'Phone'
+      in: query
+      required: false
+      schema:
+        type: string
+    FilterStatus:
+      name: status
+      description: 'Status'
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/StatusProperty'
+    FilterRole:
+      name: role
+      description: 'Role'
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/RoleProperty'
+    FilterIsTest:
+      name: isTest
+      description: 'Is Test flag'
+      in: query
+      required: false
+      schema:
+        type: boolean
+
+  responses:
+    EmptyResponse:
+      description: 200/201 Response without data
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Response'
+              - $ref: '#/components/schemas/EmptyData'
+    UnauthorizedResponse:
+      description: 401 Unauthorized
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Response'
+              - $ref: '#/components/schemas/ErrorListData'
+    NotFoundResponse:
+      description: 404 Resource not found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Response'
+              - $ref: '#/components/schemas/ErrorListData'
+    ForbiddenResponse:
+      description: 403 Resource action forbidden
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Response'
+              - $ref: '#/components/schemas/ErrorListData'
+    BadRequestResponse:
+      description: 400 Bad request
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Response'
+              - $ref: '#/components/schemas/ErrorListData'
+    ValidationErrorResponse:
+      description: 422 Validation Error
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Response'
+              - $ref: '#/components/schemas/ErrorListData'
+    NoContentResponse:
+      description: 204 No content
+
+  schemas:
+    EmptyData:
+      description: Empty response data
+      properties:
+        data: { }
+    ErrorData:
+      description: Error response data
+      properties:
+        data:
+          $ref: '#/components/schemas/ErrorDetail'
+      required:
+        - data
+    ErrorListData:
+      description: Error list response data
+      properties:
+        data:
+          $ref: '#/components/schemas/ErrorList'
+      required:
+        - data
+    Response:
+      description: Basic response
+      type: object
+      required:
+        - timestamp
+        - success
+      properties:
+        timestamp:
+          description: Response timestamp
+          type: integer
+          format: int64
+        success:
+          description: Response status
+          type: boolean
+    ResponseList:
+      description: Basic response list
+      properties:
+        totalElements:
+          description: Response total list count
+          type: integer
+        totalPages:
+          description: Response total pages count
+          type: integer
+      required:
+        - totalElements
+        - totalPages
+    ErrorList:
+      description: 'Error list response'
+      properties:
+        items:
+          description: data
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+    ErrorDetail:
+      description: 'Error detail'
+      required:
+        - message
+        - code
+      properties:
+        message:
+          type: string
+          description: Error message
+        code:
+          type: integer
+          description: Error code
+        field:
+          type: string
+          description: Field with error
+      type: object
+    RoleProperty:
+      description: 'Role'
+      type: string
+      enum:
+        - USER
+        - ADMIN
+        - SUPERADMIN
+    StatusProperty:
+      description: 'Status'
+      type: string
+      enum:
+        - ACTIVE
+        - BLOCKED
+    UserListData:
+      description: Users list data wrapper
+      type: object
+      properties:
+        data:
+          allOf:
+            - $ref: '#/components/schemas/ResponseList'
+            - $ref: '#/components/schemas/UsersList'
+      required:
+        - data
+    UserInfo:
+      description: 'User info'
+      properties:
+        id:
+          description: 'ID'
+          type: string
+        email:
+          description: 'Email'
+          type: string
+        phone:
+          description: 'Phone'
+          type: string
+        status:
+          $ref: '#/components/schemas/StatusProperty'
+        role:
+          $ref: '#/components/schemas/RoleProperty'
+        isTest:
+          description: 'Is test flag'
+          type: boolean
+        createdAt:
+          description: 'Created at datetime'
+          type: string
+        updatedAt:
+          description: 'Updated at datetime'
+          type: string
+      required:
+        - email
+        - phone
+        - isTest
+        - status
+        - role
+        - createdAt
+        - updatedAt
+    UsersList:
+      description: 'User list data'
+      properties:
+        items:
+          description: 'User list items'
+          type: array
+          items:
+            $ref: '#/components/schemas/UserInfo'
+      required:
+        - items
+
+    UserData:
+      description: 'User data'
+      properties:
+        data:
+          $ref: '#/components/schemas/UserInfo'
+      required:
+        - data
+
+  

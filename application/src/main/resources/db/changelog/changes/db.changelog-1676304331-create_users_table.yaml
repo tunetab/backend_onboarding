@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_users_table
+      author: dveremeiko@icerockdev.com
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: is_test
+                  type: boolean
+              - column:
+                  name: status
+                  type: varchar
+              - column:
+                  name: role
+                  type: varchar
+              - column:
+                  name: phone
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp
+                  constraints:
+                    nullable: true
+        - createIndex:
+            indexName: idx_users_deleted_at
+            columns:
+              - column:
+                  name: deleted_at
+            tableName: users
+            unique: false
+
+      rollback:
+        - sql:
+            sql: DROP TABLE users;

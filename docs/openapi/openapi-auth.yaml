@@ -1,0 +1,296 @@
+openapi: 3.0.3
+info:
+  title: '#{PROJECT_NAME_H} Auth API'
+  version: 1.0.0
+servers: [ ]
+
+paths:
+  /v1/auth/sign-up:
+    post:
+      tags:
+        - Auth
+      summary: 'Sign up'
+      operationId: 'signUp'
+      requestBody:
+        $ref: '#/components/requestBodies/SignUpRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/TokensResponse'
+        '422':
+          $ref: 'openapi-common.yaml#/components/responses/ValidationErrorResponse'
+
+  /v1/auth/sign-in:
+    post:
+      tags:
+        - Auth
+      summary: 'Sign in'
+      operationId: 'signIn'
+      requestBody:
+        $ref: '#/components/requestBodies/SignInRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/TokensResponse'
+        '422':
+          $ref: 'openapi-common.yaml#/components/responses/ValidationErrorResponse'
+  /v1/auth/sign-in-by-phone:
+    post:
+      tags:
+        - Auth
+      summary: 'Sign in by phone'
+      operationId: 'signInByPhone'
+      requestBody:
+        $ref: '#/components/requestBodies/SignInByPhoneRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/TokensResponse'
+        '422':
+          $ref: 'openapi-common.yaml#/components/responses/ValidationErrorResponse'
+
+  /v1/auth/refresh:
+    post:
+      tags:
+        - Auth
+      summary: 'Refresh JWT token'
+      operationId: 'createNewAccessToken'
+      requestBody:
+        $ref: '#/components/requestBodies/RefreshTokenRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/TokensResponse'
+        '404':
+          $ref: 'openapi-common.yaml#/components/responses/NotFoundResponse'
+        '422':
+          $ref: 'openapi-common.yaml#/components/responses/ValidationErrorResponse'
+
+  /v1/auth/logout:
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Auth
+      summary: 'Logout from system'
+      operationId: 'createLogoutAction'
+      requestBody:
+        $ref: '#/components/requestBodies/RefreshTokenRequest'
+      responses:
+        '200':
+          $ref: 'openapi-common.yaml#/components/responses/EmptyResponse'
+
+  /v1/auth/restore-by-phone:
+    post:
+      tags:
+        - Auth
+      summary: 'Restore password by phone request'
+      description: 'Restore user password by phone'
+      operationId: 'restoreByPhone'
+      requestBody:
+        $ref: '#/components/requestBodies/RestorePasswordByPhoneRequest'
+      responses:
+        '200':
+          $ref: 'openapi-common.yaml#/components/responses/EmptyResponse'
+
+  /v1/auth/restore-by-email:
+    post:
+      tags:
+        - Auth
+      summary: 'Restore password request'
+      description: 'Restore user password'
+      operationId: 'restoreByEmail'
+      requestBody:
+        $ref: '#/components/requestBodies/RestorePasswordRequest'
+      responses:
+        '200':
+          $ref: 'openapi-common.yaml#/components/responses/EmptyResponse'
+    put:
+      tags:
+        - Auth
+      summary: 'Change password request'
+      description: 'Change password with reset-token and new password'
+      operationId: 'changeRestorePasswordByEmail'
+      requestBody:
+        $ref: '#/components/requestBodies/ChangeRestorePasswordRequest'
+      responses:
+        '200':
+          $ref: 'openapi-common.yaml#/components/responses/EmptyResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  requestBodies:
+    EmailRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EmailRequestBody'
+    SignUpRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SignUpRequestBody'
+    SignInRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SignInRequestBody'
+    SignInByPhoneRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SignInByPhoneRequestBody'
+    RefreshTokenRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RefreshTokenRequestBody'
+    RestorePasswordRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestorePasswordRequestBody'
+    RestorePasswordByPhoneRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestorePasswordByPhoneRequestBody'
+    ChangeRestorePasswordRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ChangeRestorePasswordRequestBody'
+
+  responses:
+    TokensResponse:
+      description: 'JWT & Refresh token'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'openapi-common.yaml#/components/schemas/Response'
+              - $ref: '#/components/schemas/TokensResponseData'
+
+  schemas:
+    TokensData:
+      description: 'Tokens data'
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token
+        refreshToken:
+          type: string
+          description: JWT refresh token
+      required:
+        - accessToken
+        - refreshToken
+    TokensResponseData:
+      description: 'Tokens response data'
+      properties:
+        data:
+          $ref: '#/components/schemas/TokensData'
+      required:
+        - data
+    SignUpRequestBody:
+      description: 'Sign up request body'
+      properties:
+        email:
+          description: 'Email'
+          type: string
+          example: mail@mail.ru
+        phone:
+          description: 'Phone'
+          type: string
+          example: 79006787876
+        password:
+          description: 'Password'
+          type: string
+          example: Test123!
+      required:
+        - email
+        - phone
+        - password
+    SignInRequestBody:
+      description: 'Sign in request body'
+      properties:
+        email:
+          description: 'Email'
+          type: string
+          example: mail@mail.ru
+        password:
+          description: 'Password'
+          type: string
+          example: Test123!
+      required:
+        - email
+        - password
+    SignInByPhoneRequestBody:
+      description: 'Sign in by phone request body'
+      properties:
+        phone:
+          description: 'Phone'
+          type: string
+          example: 79006787876
+        password:
+          description: 'Password'
+          type: string
+          example: Test123!
+      required:
+        - phone
+        - password
+    RefreshTokenRequestBody:
+      description: 'Refresh token request body'
+      properties:
+        refreshToken:
+          type: string
+          description: refreshToken
+      required:
+        - refreshToken
+    EmailRequestBody:
+      description: 'Email request body'
+      properties:
+        email:
+          description: 'Email'
+          type: string
+          example: mail@mail.ru
+      required:
+        - email
+    RestorePasswordRequestBody:
+      description: 'Restore password request body'
+      properties:
+        email:
+          description: 'Email'
+          type: string
+          example: mail@mail.ru
+      required:
+        - email
+    RestorePasswordByPhoneRequestBody:
+      description: 'Restore password by phone request body'
+      properties:
+        phone:
+          description: 'Phone'
+          type: string
+          example: 79006787876
+      required:
+        - phone
+    ChangeRestorePasswordRequestBody:
+      description: 'Change restore password request body'
+      properties:
+        confirmationToken:
+          description: 'Confirmation token'
+          type: string
+        password:
+          description: 'Password'
+          type: string
+        passwordRepeat:
+          description: 'Password repeat'
+          type: string
+        phone:
+          description: 'Phone'
+          type: string
+      required:
+        - confirmationToken
+        - password
+        - passwordRepeat
+

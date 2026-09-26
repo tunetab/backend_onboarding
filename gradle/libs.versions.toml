@@ -1,0 +1,113 @@
+[versions]
+kotlinVersion = "2.0.21"
+kotlinCoroutinesVersion = "1.10.1"
+springBootVersion="3.5.10"
+springDependencyManagementVersion="1.1.6"
+jjwtVersion = "0.11.5"
+liquibaseCoreVersion="4.27.0"
+liquibaseGradlePluginVersion="2.2.2"
+picocliVersion="4.7.0"
+snakeyamlVersion="2.2"
+jacksonVersion = "2.13.4"
+logbackVersion = "6.1.2"
+postgresqlVersion = "42.7.3"
+detektVersion = "1.23.8"
+junitVersion = "5.11.0"
+mockkVersion = "1.13.10"
+guavaVersion = "28.2-jre"
+icerockStorageServiceVersion = "0.11.0"
+icerockEmailServiceVersion = "0.3.0"
+icerockFcmPushServiceVersion = "2.1.2"
+icerockSmsServiceVersion = "1.0.0"
+dotenvVersion = "2.0.0"
+apacheBeanUtilsVersion = "1.9.4"
+hibernateTypeVersion = "2.21.0"
+javaxActivationVersion = "1.1"
+openApiGeneratorVersion = "6.2.1"
+socketIOVersion = "2.0.1"
+mergeOpenApiVersion = "1.0.5"
+scrImageVersion = "4.0.33"
+springdocWebMvcUiVersion = "2.5.0"
+testContainerPostgresVersion = "1.20.0"
+
+[libraries]
+# Kotlin
+kotlinReflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlinVersion" }
+kotlinCoroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinCoroutinesVersion" }
+
+# Spring
+springBootConfigurationProcessor = { group = "org.springframework.boot", name = "spring-boot-configuration-processor", version.ref = "springBootVersion" }
+springBootStarterWeb = { group = "org.springframework.boot", name = "spring-boot-starter-web", version.ref = "springBootVersion" }
+springBootStarterValidation = { group = "org.springframework.boot", name = "spring-boot-starter-validation", version.ref = "springBootVersion" }
+springBootStarterDataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa", version.ref = "springBootVersion" }
+springBootStarterSecurity = { group = "org.springframework.boot", name = "spring-boot-starter-security", version.ref = "springBootVersion" }
+springBootStarterAop = { group = "org.springframework.boot", name = "spring-boot-starter-aop", version.ref = "springBootVersion" }
+
+# Json web token libs
+jsonWebTokenApi = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jjwtVersion" }
+jsonWebTokenImpl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jjwtVersion" }
+jsonWebTokenJackson= { group = "io.jsonwebtoken", name = "jjwt-jackson", version.ref = "jjwtVersion" }
+
+# Liquibase
+
+liquibaseCore = { module = "org.liquibase:liquibase-core", version.ref = "liquibaseCoreVersion" }
+
+# Libs for generate localization files
+picocli = { module = "info.picocli:picocli", version.ref = "picocliVersion" }
+snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyamlVersion" }
+
+# IceRock libs
+icerockStorageService = { module = "com.icerockdev:storage-service", version.ref = "icerockStorageServiceVersion" }
+icerockEmailService = { module = "com.icerockdev.service:email-service", version.ref = "icerockEmailServiceVersion" }
+icerockFcmPushService = { module = "com.icerockdev.service:fcm-push-service", version.ref = "icerockFcmPushServiceVersion" }
+icerockSmsService = { module = "com.icerockdev.service:sms-service", version.ref = "icerockSmsServiceVersion" }
+
+# Test libs
+kotlinTestJunit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlinVersion" }
+junitJupiterEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitVersion" }
+junitJupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitVersion" }
+springBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBootVersion" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
+testContainerPostgres = { group = "org.testcontainers", name = "postgresql", version.ref = "testContainerPostgresVersion" }
+
+# Apache
+apacheCommonsValidator = { module = "commons-validator:commons-validator", version = "1.7" }
+apacheBeanUtils = { module = "commons-beanutils:commons-beanutils", version.ref = "apacheBeanUtilsVersion" }
+
+# Others
+hibernateType = { module = "com.vladmihalcea:hibernate-types-60", version.ref = "hibernateTypeVersion" }
+javaxActivation = { module = "javax.activation:activation", version.ref = "javaxActivationVersion" }
+jacksonModuleKotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonVersion" }
+logbackGelf = { module = "de.siegmar:logback-gelf", version.ref = "logbackVersion" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresqlVersion" }
+socketIO = { module = "com.corundumstudio.socketio:netty-socketio", version.ref = "socketIOVersion"}
+scrImage = { module = "com.sksamuel.scrimage:scrimage-core", version.ref = "scrImageVersion"}
+springdocWebMvcUi = { group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version.ref = "springdocWebMvcUiVersion" }
+
+# Gradle plugin artifacts
+detektGradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detektVersion" }
+detektCli = { module = "io.gitlab.arturbosch.detekt:detekt-cli", version.ref = "detektVersion" }
+liquibaseGradlePlugin = { module = "org.liquibase:liquibase-gradle-plugin", version.ref = "liquibaseGradlePluginVersion" }
+dotenvPlugin = { module = "co.uzzu.dotenv:gradle", version.ref = "dotenvVersion" }
+openApiGeneratorPlugin = { module = "org.openapitools:openapi-generator-gradle-plugin", version.ref = "openApiGeneratorVersion" }
+mergeOpenApiGradlePlugin = { module = "com.rameshkp.openapi-merger-gradle-plugin:com.rameshkp.openapi-merger-gradle-plugin.gradle.plugin", version.ref = "mergeOpenApiVersion" }
+
+[bundles]
+testLibrary = ["kotlinTestJunit5", "mockk", "testContainerPostgres"]
+testLibraryRuntimeOnly = ["junitJupiterEngine", "junitJupiterApi"]
+
+[plugins]
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinVersion" }
+kotlinGradlePlugin = { id = "org.jetbrains.kotlin.gradle-plugin", version.ref = "kotlinVersion" }
+kotlinGradleAllOpenPlugin = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlinVersion" }
+kotlinGradleNoArgPlugin = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlinVersion" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.serialization", version.ref = "kotlinVersion" }
+kotlinSpringPlugin = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlinVersion" }
+kotlinJpaPlugin = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlinVersion" }
+springBootPlugin = { id = "org.springframework.boot", version.ref = "springBootVersion" }
+springDependencyManagementPlugin = { id = "io.spring.dependency-management", version.ref = "springDependencyManagementVersion" }
+detektGradlePlugin = { id = "io.gitlab.arturbosch.detekt", version.ref = "detektVersion" }
+liquibaseGradlePlugin = { id = "org.liquibase.gradle", version.ref = "liquibaseGradlePluginVersion" }
+dotenvPlugin = { id = "co.uzzu.dotenv.gradle", version.ref = "dotenvVersion" }
+openApiGeneratorPlugin = { id = "org.openapi.generator", version.ref = "openApiGeneratorVersion" }
+mergeOpenApiGradlePlugin = { id = "com.rameshkp.openapi-merger-gradle-plugin", version.ref = "mergeOpenApiVersion" }

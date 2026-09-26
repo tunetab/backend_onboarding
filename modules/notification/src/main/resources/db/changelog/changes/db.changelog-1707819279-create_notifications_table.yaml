@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_notifications_table
+      author: author@email.com
+      changes:
+        - createTable:
+            tableName: notifications
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: entity_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entity_type
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_read
+                  type: boolean
+              - column:
+                  name: message
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: integer
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+      rollback:
+        - sql:
+            sql: DROP TABLE notifications;

@@ -1,0 +1,58 @@
+###
+
+POST {{apiUrl}}/v1/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "test@icerockdev.com",
+  "password": "Test123!"
+}
+
+> {%
+    client.global.set("accessToken", response.body.data.accessToken);
+    client.global.set("refreshToken", response.body.data.refreshToken);
+%}
+
+###
+
+POST {{apiUrl}}/v1/auth/refresh
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+> {%
+    client.global.set("accessToken", response.body.data.accessToken);
+    client.global.set("refreshToken", response.body.data.refreshToken);
+%}
+
+###
+
+POST {{apiUrl}}/v1/auth/logout
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+###
+
+POST {{apiUrl}}/v1/auth/sign-up
+Content-Type: application/json
+
+{
+  "email": "test@icerockdev.com",
+  "phone": "79004565660",
+  "password": "Test123!",
+  "passwordRepeat": "Test123!"
+}
+
+> {%
+    client.global.set("accessToken", response.body.data.accessToken);
+    client.global.set("refreshToken", response.body.data.refreshToken);
+%}
+
+###

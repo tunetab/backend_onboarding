@@ -1,0 +1,23 @@
+{
+  "inputs": [
+    {
+      "inputFile": "docs/openapi/openapi-common.yaml"
+    },
+    {
+      "inputFile": "docs/openapi/openapi-auth.yaml"
+    },
+    {
+      "inputFile": "docs/openapi/openapi-users.yaml"
+    },
+    {
+      "inputFile": "docs/openapi/openapi-admin-users.yaml"
+    },
+    {
+      "inputFile": "modules/notification/openapi.yaml"
+    },
+    {
+      "inputFile": "modules/file/openapi.yaml"
+    }
+  ],
+  "output": "./openapi.yaml"
+}

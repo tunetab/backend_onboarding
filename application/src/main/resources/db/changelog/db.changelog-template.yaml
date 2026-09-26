@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: {changelog-id}-1
+      author: Specify your name
+      changes:
+        - createTable:
+            tableName: table_name
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: firstname
+                  type: varchar(50)
+              - column:
+                  name: lastname
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: state
+                  type: char(2)
+      rollback:
+        - sql:
+            sql: DROP TABLE table_name;
+  - changeSet:
+      id: {changelog-id}-2
+      author: Specify your name
+      changes:
+        - addColumn:
+            tableName: table_name
+            columns:
+              - column:
+                  name: username
+                  type: varchar(8)
+      rollback:
+        - dropColumn:
+            tableName: table_name
+            columnName: username

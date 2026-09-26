@@ -1,0 +1,244 @@
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_TLS_CERTDIR: ""
+  GIT_STRATEGY: fetch
+  GIT_SUBMODULE_STRATEGY: recursive
+  DOCKER_BUILD_IMAGE: docker:latest
+  DOCKER_DIND_IMAGE: docker:dind
+  NGINX_BUILD_IMAGE: gitlab.icerockdev.com:4567/docker/nginx/nginx-alpine:latest
+  JAVA_BUILD_IMAGE: gitlab.icerockdev.com:4567/docker/java/openjdk-slim-21:21.0.2_13-jdk-slim-0.1
+  #  NODEJS_BUILD_IMAGE: gitlab.icerockdev.com:4567/docker/node/node-18.16:latest
+  ENVIRONMENT_DIR: docker/environment
+  SYNC_FOLDER: docker/sync
+  JAVA_VERSION_TAG: java21
+  ARCHIVE_INIT: init.tar.gz
+  #  ARCHIVE_ADMIN: admin.build.tar.gz
+  ARCHIVE_JAR: app.build.tar.gz
+
+stages:
+  - lint
+  - init
+  - build
+  - make-image
+  - deploy
+
+# TODO: include from configuration repo - https://gitlab.icerockdev.com/web/configuration/ci-templates
+include:
+  - local: '/ci-templates/.0-common.yml'
+
+  - project: 'web/configuration/ci-templates'
+    ref: 'master'
+    file: '/kotlin/spring/lint.gitlab-ci.yml'
+
+  - project: 'web/configuration/ci-templates'
+    ref: 'master'
+    file: '/openapi/openapi-lint.gitlab-ci.yml'
+
+  - local: '/ci-templates/.2-init-stage.yml'
+
+  - project: 'web/configuration/ci-templates'
+    ref: 'master'
+    file: '/kotlin/spring/build.gitlab-ci.yml'
+
+  # TODO: Uncomment when init frontend app (in frontend/ path)
+  #  - project: 'web/configuration/ci-templates'
+  #    ref: 'master'
+  #    file: '/frontend/build.gitlab-ci.yml'
+
+  - project: 'web/configuration/ci-templates'
+    ref: 'master'
+    file: '/kotlin/make-image.gitlab-ci.yml'
+
+  - project: 'web/configuration/ci-templates'
+    ref: 'master'
+    file: '/nginx/make-image.gitlab-ci.yml'
+
+  - project: 'web/configuration/ci-templates'
+    ref: 'master'
+    file: '/deploy/deploy.gitlab-ci.yml'
+
+# TODO: Switch to shell-executor when java21 becomes available
+lint:
+  image: ${JAVA_BUILD_IMAGE}
+  stage: lint
+  services:
+    - name: docker:dind
+      command: ["--tls=false"]
+  tags:
+    - fast
+    - docker-dind
+  script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - mkdir -p .gradle
+    - ./gradlew clean
+    - ./gradlew build
+
+### Development build java
+Development build java:
+  extends:
+    - .build-java
+    - .only_dev_definition
+
+### Staging build java
+Staging build java:
+  extends:
+    - .build-java
+    - .only_stage_definition
+
+### Production build java
+Production build java:
+  extends:
+    - .build-java
+    - .only_prod_definition
+
+# TODO: Uncomment if added frontend
+#### Development build admin
+#Development build admin:
+#  extends:
+#    - .build-frontend
+#    - .only_dev_definition
+#  variables:
+#    BUILD_ENV: 'dev'
+#    ARCHIVE_NODE_BUILD: ${ARCHIVE_ADMIN}
+#    FRONTEND_DIR: 'frontend/admin'
+#
+#### Staging build admin
+#Staging build admin:
+#  extends:
+#    - .build-frontend
+#    - .only_stage_definition
+#  variables:
+#    BUILD_ENV: 'stage'
+#    ARCHIVE_NODE_BUILD: ${ARCHIVE_ADMIN}
+#    FRONTEND_DIR: 'frontend/admin'
+#
+#### Production build admin
+#Production build admin:
+#  extends:
+#    - .build-frontend
+#    - .only_prod_definition
+#  variables:
+#    BUILD_ENV: 'prod'
+#    ARCHIVE_NODE_BUILD: ${ARCHIVE_ADMIN}
+#    FRONTEND_DIR: 'frontend/admin'
+
+### Development make nginx
+Development make nginx:
+  extends:
+    - .make_nginx_template
+    - .only_dev_definition
+  variables:
+    BUILD_ENV: 'dev'
+#  before_script:
+#    - tar -xzf ${ARCHIVE_ADMIN} -C frontend/admin
+  dependencies:
+    - Development init
+#    - Development build admin
+  needs:
+    - Development init
+#    - Development build admin
+
+### Staging make nginx
+Staging make nginx:
+  extends:
+    - .make_nginx_template
+    - .only_stage_definition
+  variables:
+    BUILD_ENV: 'stage'
+#  before_script:
+#    - tar -xzf ${ARCHIVE_ADMIN} -C frontend/admin
+  dependencies:
+    - Staging init
+#    - Staging build admin
+  needs:
+    - Staging init
+#    - Staging build admin
+
+### Production make nginx
+Production make nginx:
+  extends:
+    - .make_nginx_template
+    - .only_prod_definition
+  variables:
+    BUILD_ENV: 'prod'
+#  before_script:
+#    - tar -xzf ${ARCHIVE_ADMIN} -C frontend/admin
+  dependencies:
+    - Production init
+#    - Production build admin
+  needs:
+    - Production init
+#    - Production build admin
+
+### Development make java
+Development make java:
+  extends:
+    - .make_java_template
+    - .only_dev_definition
+  variables:
+    BUILD_ENV: 'dev'
+  dependencies:
+    - Development init
+    - Development build java
+  needs:
+    - Development init
+    - Development build java
+
+### Staging make java
+Staging make java:
+  extends:
+    - .make_java_template
+    - .only_stage_definition
+  variables:
+    BUILD_ENV: 'stage'
+  dependencies:
+    - Staging init
+    - Staging build java
+  needs:
+    - Staging init
+    - Staging build java
+
+### Production make java
+Production make java:
+  extends:
+    - .make_java_template
+    - .only_prod_definition
+  variables:
+    BUILD_ENV: 'prod'
+  dependencies:
+    - Production init
+    - Production build java
+  needs:
+    - Production init
+    - Production build java
+
+### Development deploy
+Development deploy:
+  extends:
+    - .deploy_template
+    - .only_dev_definition
+  variables:
+    BUILD_ENV: 'dev'
+  dependencies:
+    - Development init
+
+### Staging deploy
+Staging deploy:
+  extends:
+    - .deploy_template
+    - .only_stage_definition
+  variables:
+    BUILD_ENV: 'stage'
+  dependencies:
+    - Staging init
+
+### Production deploy
+Production deploy:
+  extends:
+    - .deploy_template
+    - .only_prod_definition
+  variables:
+    BUILD_ENV: 'prod'
+  dependencies:
+    - Production init
