@@ -13,6 +13,9 @@
       "inputFile": "docs/openapi/openapi-admin-users.yaml"
     },
     {
+      "inputFile": "docs/openapi/openapi-directors.yaml"
+    },
+    {
       "inputFile": "modules/notification/openapi.yaml"
     },
     {

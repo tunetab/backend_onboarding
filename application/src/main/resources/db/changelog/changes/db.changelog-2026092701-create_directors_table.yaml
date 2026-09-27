@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_directors_table-1
+      author: onboarding
+      changes:
+        - createTable:
+            tableName: directors
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: country
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: win_oscar
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: oscar_winner_title
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: directors

@@ -1,0 +1,15 @@
+### Create director
+POST http://localhost:8080/v1/user/directors
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Christopher Nolan",
+  "country": "United Kingdom",
+  "win_oscar": true,
+  "oscar_winner_title": "Oppenheimer"
+}
+
+### Get directors
+GET http://localhost:8080/v1/user/directors
+Authorization: Bearer {{accessToken}}
