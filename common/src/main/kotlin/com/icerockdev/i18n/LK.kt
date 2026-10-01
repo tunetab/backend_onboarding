@@ -44,4 +44,10 @@ object LK {
     const val fileInvalidType = "file_invalid_type"
     const val fileInvalidTypeOr = "file_invalid_type_or"
     const val fileSaveError = "file_save_error"
+
+    // directors
+    const val directorCreatedGoodChoice = "director_created_good_choice"
+    const val directorCreatedLove = "director_created_love"
+    const val directorCreatedBest = "director_created_best"
+    const val directorCreatedUnrecognized = "director_created_unrecognized"
 }

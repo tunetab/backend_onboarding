@@ -1,0 +1,156 @@
+openapi: 3.0.3
+info:
+  title: 'Back_Onboarding Directors API'
+  version: 1.0.0
+servers: [ ]
+
+paths:
+  /v1/user/directors:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Director
+      summary: 'Get directors'
+      description: 'Get directors'
+      operationId: 'getDirectorList'
+      parameters:
+        - $ref: 'openapi-common.yaml#/components/parameters/PaginationPageNumber'
+        - $ref: 'openapi-common.yaml#/components/parameters/PaginationPageSize'
+        - $ref: 'openapi-common.yaml#/components/parameters/PaginationPageSort'
+      responses:
+        '200':
+          $ref: '#/components/responses/DirectorListResponse'
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Director
+      summary: 'Create director'
+      description: 'Create director'
+      operationId: 'createDirector'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateDirectorRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/DirectorCreatedResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  requestBodies:
+    CreateDirectorRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateDirectorRequestBody'
+
+  responses:
+    DirectorListResponse:
+      description: 'Director list response'
+      headers:
+        X-Total-Count:
+          description: 'Total number of directors'
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'openapi-common.yaml#/components/schemas/Response'
+              - $ref: '#/components/schemas/DirectorListData'
+    DirectorCreatedResponse:
+      description: 'Director creation response'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'openapi-common.yaml#/components/schemas/Response'
+              - $ref: '#/components/schemas/DirectorCreatedData'
+
+  schemas:
+    CreateDirectorRequestBody:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 'Director name'
+        country:
+          type: string
+          description: 'Director country'
+        win_oscar:
+          type: boolean
+          description: 'Whether the director has won an Oscar'
+        oscar_winner_title:
+          type: string
+          nullable: true
+          description: 'Title that won an Oscar'
+      required:
+        - name
+        - country
+        - win_oscar
+    DirectorInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        country:
+          type: string
+        win_oscar:
+          type: boolean
+        oscar_winner_title:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - country
+        - win_oscar
+        - createdAt
+        - updatedAt
+    DirectorList:
+      type: object
+      properties:
+        directors:
+          type: array
+          items:
+            $ref: '#/components/schemas/DirectorInfo'
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+      required:
+        - directors
+        - totalElements
+        - totalPages
+    DirectorListData:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DirectorList'
+      required:
+        - data
+    DirectorCreatedData:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DirectorInfo'
+        message:
+          type: string
+          description: 'Localized message about the created director'
+      required:
+        - data
+        - message
